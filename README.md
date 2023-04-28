@@ -19,5 +19,5 @@ Asset sources:
 
 Code sources:
 - `phaser.esm.js` come from [Phaser.io](https://phaser.io/)
-- `adventure_engine.js` and `index.html` were created for this project [Adam Smith](https://github.com/rndmcnlly) and edited by me.
-- `my_game.js` was sketched by [Adam Smith](https://github.com/rndmcnlly) and rewritten by me.
+- `adventure.js` and `index.html` were created for this project [Adam Smith](https://github.com/rndmcnlly) and edited by me.
+- `game.js` was sketched by [Adam Smith](https://github.com/rndmcnlly) and rewritten by me.
