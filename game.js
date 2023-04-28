@@ -75,6 +75,20 @@ class Demo2 extends AdventureScene {
             .on('pointerdown', () => {
                 this.gotoScene('demo1');
             });
+
+        let finish = this.add.text(this.w * 0.6, this.w * 0.2, '(finish the game)')
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage('*giggles*');
+                this.tweens.add({
+                    targets: finish,
+                    x: this.s + (this.h - 2 * this.s) * Math.random(),
+                    y: this.s + (this.h - 2 * this.s) * Math.random(),
+                    ease: 'Sine.inOut',
+                    duration: 500
+                });
+            })
+            .on('pointerdown', () => this.gotoScene('outro'));
     }
 }
 
@@ -92,6 +106,17 @@ class Intro extends Phaser.Scene {
     }
 }
 
+class Outro extends Phaser.Scene {
+    constructor() {
+        super('outro');
+    }
+    create() {
+        this.add.text(50, 50, "That's all!").setFontSize(50);
+        this.add.text(50, 100, "Click anywhere to restart.").setFontSize(20);
+        this.input.on('pointerdown', () => this.scene.start('intro'));
+    }
+}
+
 
 const game = new Phaser.Game({
     scale: {
@@ -100,7 +125,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Intro, Demo1, Demo2],
+    scene: [Intro, Demo1, Demo2, Outro],
     title: "Adventure Game",
 });
 
