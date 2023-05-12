@@ -2,6 +2,8 @@ class AdventureScene extends Phaser.Scene {
 
     init(data) {
         this.inventory = data.inventory || [];
+        this.hp = 3;
+        this.mp = 3;
     }
 
     constructor(key, name) {
@@ -59,6 +61,16 @@ class AdventureScene extends Phaser.Scene {
             targets: this.messageBox,
             alpha: { from: 1, to: 0 },
             easing: 'Quintic.in',
+            duration: 4 * this.transitionDuration
+        });
+    }
+
+    showImage(image, x, y, scale){
+        this.sprite = this.add.image(x, y, image).setScale(scale);
+        this.tweens.add({
+            targets: this.sprite,
+            alpha:{from: 1, to: 0},
+            easing:'Quintic.in',
             duration: 4 * this.transitionDuration
         });
     }
@@ -131,7 +143,7 @@ class AdventureScene extends Phaser.Scene {
                 });
             }
         }
-        this.time.delayedCall(500, () => {
+        this.time.delayedCall(200, () => {
             this.inventory = this.inventory.filter((e) => e != item);
             this.updateInventory();
         });
@@ -147,4 +159,17 @@ class AdventureScene extends Phaser.Scene {
     onEnter() {
         console.warn('This AdventureScene did not implement onEnter():', this.constructor.name);
     }
+
+    damageHP() {this.hp -= 1;}
+
+    useMP() {
+        this.mp -= 1;
+        if (this.mp < 0){
+            this.mp = 0;
+        }
+    }
+
+    checkHP() {return this.hp;}
+
+    checkMP() {return this.mp;}
 }

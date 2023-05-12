@@ -1,3 +1,344 @@
+class Loading extends Phaser.Scene{
+    constructor() {
+        super('loading');
+    }
+    preload(){
+        // progress bar
+        const progress = this.add.graphics();
+        this.add.text(920, 450, 'Loading...');
+        progress.fillStyle(0x222222, 0.8);
+        progress.fillRect(815, 470, 320, 50);
+
+        this.load.on('progress', value => {
+            progress.clear();
+            progress.fillStyle(0xffffff, 1);
+            progress.fillRect(815, 480, 300 * value, 30);
+        });
+
+        this.load.on('complete', () => {
+            this.add.text(895, 530, 'Click to begin');
+         });
+
+        //loading assets
+        this.load.path = "./assets/";
+        this.load.video('logo', 'Studio Intro.mp4');
+        this.load.audio('dial', 'Dial up.mp3');
+        this.load.image('start', 'Menu.jpg');
+        this.load.image('background', 'Background.png');
+        this.load.image('sword', 'Sprite Sword.png');
+        this.load.image('swordColor', 'Sprite Sword Color.png');
+        this.load.image('shield', 'Sprite Shield.png');
+        this.load.image('shieldColor', 'Sprite Shield Color.png');
+        this.load.image('tome', 'Sprite Tome.png');
+        this.load.image('tomeColor', 'Sprite Tome Color.png');
+        this.load.image('forest', 'Forest.jpg');
+        this.load.image('goblin', 'Goblin.png');
+        this.load.image('temple','Temple.png');
+        this.load.image('roomBlue', 'Room Blue.png');
+        this.load.image('roomGreen', 'Room Green.png');
+        this.load.image('gemBlue', 'Gem Blue.png');
+        this.load.image('gemGreen', 'Gem Green.png');
+        this.load.image('bug', 'Gem Green Bug.png');
+        this.load.image('dragon', 'Dragon.png');
+    }
+    create(){
+        this.add.text(0, 0, 'Loading...');
+        this.input.on('pointerdown', ()=> this.scene.start('studio'));
+    }
+}
+
+class Studio extends Phaser.Scene{
+    constructor(){
+        super('studio');
+    }
+    create(){
+        this.sound.play('dial');
+        const videoLogo = this.add.video(960, 540, 'logo');
+        videoLogo.on('locked', () => {
+            let message = this.add.text(640, 100, 'Click to play video');
+            videoLogo.on('unlocked', () => {
+                message.destroy();
+            });
+        });
+        videoLogo.play();
+
+        this.input.on('pointerdown', () => this.scene.start('menu'));
+        
+        this.time.delayedCall(2000, () =>{
+            this.cameras.main.fadeOut(2000, 0, 0, 0);
+        });
+        
+        this.time.delayedCall(5000, () => this.scene.start('menu'));
+    }
+}
+
+class Menu extends Phaser.Scene{
+    constructor(){
+        super('menu');
+    }
+    create(){
+        this.add.text(0, 0, 'Menu');
+        this.imageBG = this.add.image(1200, 540, 'start');
+        this.imageBG.setScale(1.15);
+
+        this.add.text(10, 25, "Path to Adventure", {
+            fontFamily: 'Georgia, serif',
+            fontSize: 50,
+        });
+        this.add.text(10, 100, "Click to Begin").setFontSize(20);
+        
+        this.input.on('pointerdown', () => this.scene.start('choice'));
+    }
+}
+
+class Choice extends AdventureScene{
+    constructor(){
+        super("choice", "Choose your equipment!");
+    }
+
+    onEnter(){
+        this.add.image(this.w *0.33, this.w * 0.27, "background").setScale(0.6);
+
+        let sword = this.add.image(this.w * 0.4, this.w * 0.2, 'sword')
+            .setScale(0.3)
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showImage('swordColor', this.w * 0.4, this.w * 0.2, 0.3);
+                this.showMessage('A Sword: Made for those who believe only in their own strength.')
+            })  
+            .on('pointerdown', () => {
+                this.showMessage("You have chosen the sword");
+                if(this.hasItem("shield") || this.hasItem("tome")){
+                    this.loseItem("shield");
+                    this.loseItem("tome");
+                }
+                this.gainItem('sword');
+            });
+        
+        let shield = this.add.image(this.w * 0.2, this.w * 0.4, 'shield')
+            .setScale(0.2)
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showImage('shieldColor', this.w *0.2, this.w * 0.4, 0.2);
+                this.showMessage("A Shield: Made for those who believe frinedship is key.")
+            })
+            .on('pointerdown', () => {
+                this.showMessage("You have chosen the shield");
+                if(this.hasItem("sword") || this.hasItem("tome")){
+                    this.loseItem('sword');
+                    this.loseItem('tome');
+                }
+                this.gainItem('shield');
+            });
+        
+        let tome = this.add.image(this.w * 0.6, this.w *0.4, 'tome')
+            .setScale(0.2)
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showImage('tomeColor', this.w * 0.6, this.w *0.4, 0.2);
+                this.showMessage("A Tome: Made for those who want creative solutions, but has limited uses.")
+            })
+            .on('pointerdown', () => {
+                this.showMessage("You have chosen the tome");
+                if(this.hasItem("sword") || this.hasItem("shield")){
+                    this.loseItem("sword");
+                    this.loseItem("shield");
+                }
+                this.gainItem("tome");
+            });
+        
+        this.continue = this.add.text(this.w * 0.35, this.w* 0.5, "Continue!")
+            .setFontSize(50)
+            .setInteractive()
+            .on('pointerover', () => {
+                if (this.hasItem('sword') || this.hasItem('shield') || this.hasItem('tome')){
+                    this.showMessage("Are you sure about your choice?");
+                } else{
+                    this.showMessage("It's dangerous to go alone!");
+                }
+            })
+            
+            .on('pointerdown', () => {
+                if (this.hasItem('sword') || this.hasItem('shield') || this.hasItem('tome')){
+                this.showMessage("Onward to Adventure!")
+                this.gotoScene('gobbers')
+            } else{
+                this.showMessage("Choose an equipment");
+                this.tweens.add({
+                    targets: this.continue,
+                    x: '+=' + this.s,
+                    repeat: 2,
+                    yoyo: true,
+                    ease: 'Sine.inOut',
+                    duration: 100
+                });
+            }
+        });
+    }
+}
+
+class Gobbers extends AdventureScene{
+    constructor(){
+        super('gobbers', "On the path towards a temple of treasure...");
+    }
+    
+    onEnter(){
+        this.add.image(this.w *0.35, this.w * 0.3, "forest").setScale(1.2);
+
+        let goblin = this.add.image(this.w * 0.6, this.w * 0.4, 'goblin')
+            .setScale(0.2)
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage('There appears to be a goblin on the path');
+            })
+        
+        this.time.delayedCall(2000, () => {
+            this.add.text(this.w * 0.4, this.w * 0.25, 'Attack?')
+                .setFontSize(20)
+                .setInteractive()
+                .on('pointerover', () => {
+                    this.showMessage("Have at you!");
+                })
+                .on('pointerdown', () => {
+                    if(this.hasItem('sword')){
+                        this.showMessage("You easily take down the goblin, no one's getting that treasure, but me");
+                    } else if (this.hasItem('tome')){
+                        this.useMP();
+                        let mp = this.checkMP;
+                        this.showMessage(`You use your magic to defeat the goblin. ${mp} mp left.`)
+                    } else{
+                        this.damageHP();
+                        let hp = this.checkHP();
+                        this.showMessage(`It was a difficult fight, but you managed to win with ${hp} hp.`);
+                    }
+                    this.tweens.add({
+                        targets: goblin,
+                        y: `-=${2 * this.s}`,
+                        alpha: { from: 1, to: 0 },
+                        duration: 500,
+                        onComplete: () => goblin.destroy()
+                    });
+                    this.time.delayedCall(5000, () => this.gotoScene('temple'));
+                })
+            this.add.text(this.w * 0.5, this.w * 0.25,'Sneak past?')
+                .setFontSize(20)
+                .setInteractive()
+                .on('pointerover', () => this.showMessage("Don't be suspicious!"))
+                .on('pointerdown', () => {
+                    var chance = Phaser.Math.Between(1, 3);
+                    if(chance > 1){ 
+                        this.showMessage("Snuck past");
+                    } else{
+                        this.damageHP();
+                        let hp = this.checkHP();
+                        this.showMessage(`Couldn't get past and the goblin attacked, leaving you with ${hp} hp.`);
+                    }
+                    this.gotoScene('temple');
+                })
+            this.add.text(this.w * 0.62, this.w * 0.25,'Talk?')
+                    .setFontSize(20)
+                .setInteractive()
+                .on('pointerover', () => this.showMessage("Diplomacy!"))
+                .on('pointerdown', () => {
+                    if(this.hasItem("shield")){
+                        this.tweens.add({
+                            targets: goblin,
+                            y: '+=' + this.s,
+                            repeat: 2,
+                            yoyo: true,
+                            ease: 'Sine.inOut',
+                            duration: 100
+                        });
+                        this.showMessage("The name's Gobbers and you seem nice. I'll join your party!");
+                        this.gainItem('Gobbers');
+                        this.time.delayedCall(3000, () => this.gotoScene('temple'));
+                    }
+                    else{
+                        this.showMessage("The goblin sees you as a threat, and runs away");
+                        this.time.delayedCall(2000, () => this.gotoScene('temple'));
+                    }
+                })
+        })
+    }
+}
+
+class Temple extends AdventureScene{
+    constructor(){
+        super("temple", "The Fabled Temple of treasure!");
+    }
+
+    onEnter(){
+        this.add.image(this.w *0.33, this.w * 0.27, "background").setScale(0.6);
+        this.add.image(this.w *0.37, this.w * 0.28, "temple").setScale(0.54);
+
+        this.add.text(this.w * 0, this.w * 0.05, "Green Room")
+            .setFontSize(this.s * 2)
+            .setColor(0xffffff)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("You can see a slight glow down the hall"))
+            .on('pointerdown', () =>{
+                this.showMessage("You head down the green hall")
+                this.gotoScene("greenRoom")
+            });
+        
+        this.add.text(this.w * 0.6, this.w * 0.05, "Blue Room")
+        .setFontSize(this.s * 2)
+        .setColor(0xffffff)
+        .setInteractive()
+        .on('pointerover', () => this.showMessage("You can hear the sound of rushing water down the hall"))
+        .on('pointerdown', () =>{
+            this.showMessage("You head down the blue hall")
+            this.gotoScene("blueRoom")
+        });
+        
+        this.add.text(this.w * 0.3, this.w * 0.05, "Orange Room")
+        .setFontSize(this.s * 2)
+        .setColor(0xffffff)
+        .setInteractive()
+        .on('pointerover', () => {
+            if(this.hasItem('green gem') && (this.hasItem('blue gem'))){
+                this.showMessage("The door is now unlocked");
+            }else{this.showMessage("The door's seem locked")};
+        })
+        .on('pointerdown', () =>{
+            if(this.hasItem('green gem') && this.hasItem('blue gem')){
+                this.showMessage("The door swings open with revealing a blinding light...");
+                this.gotoScene('final');
+            }
+        });
+    }
+}
+
+class GreenRoom extends AdventureScene{
+    constructor(){
+        super("greenRoom", "A bright green room with a strange glowing gem.");
+    }
+
+    onEnter(){
+        this.add.image(this.w *0.37, this.w * 0.28, "roomGreen").setScale(0.54);
+    }
+}
+
+class Blueroom extends AdventureScene{
+    constructor(){
+        super("blueRoom", "A river stretches before you.");
+    }
+    
+    // onEnter(){
+
+    // }
+}
+
+class FinalRoom extends AdventureScene{
+    constructor(){
+        super("final", "The treasure room! ... But what's that rumbling?");
+    }
+    
+    // onEnter(){
+
+    // }
+}
+
 class Demo1 extends AdventureScene {
     constructor() {
         super("demo1", "First Room");
@@ -125,7 +466,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Intro, Demo1, Demo2, Outro],
+    scene: [Loading, Studio, Menu, Choice, Gobbers, Temple, GreenRoom, Blueroom, FinalRoom, Demo1, Demo2, Outro],
     title: "Adventure Game",
 });
 
