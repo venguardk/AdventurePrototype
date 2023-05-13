@@ -193,8 +193,8 @@ class Gobbers extends AdventureScene{
             })
         
         this.time.delayedCall(2000, () => {
-            this.add.text(this.w * 0.45, this.w * 0.25, 'Attack?')
-                .setFontSize(20)
+            this.add.text(this.w * 0.4, this.w * 0.25, 'Attack?')
+                .setFontSize(this.s * 2)
                 .setInteractive()
                 .on('pointerover', () => {
                     this.showMessage("Have at you!");
@@ -204,7 +204,7 @@ class Gobbers extends AdventureScene{
                         this.showMessage("You easily take down the goblin, no one's getting that treasure, but me");
                     } else if (this.hasItem('tome')){
                         this.useMP();
-                        let mp = this.checkMP;
+                        let mp = this.checkMP();
                         this.showMessage(`You use your magic to defeat the goblin. ${mp} mp left.`)
                     } else{
                         this.damageHP();
@@ -219,8 +219,8 @@ class Gobbers extends AdventureScene{
                     });
                     this.time.delayedCall(5000, () => this.gotoScene('temple'));
                 })
-            this.add.text(this.w * 0.55, this.w * 0.25,'Sneak past?')
-                .setFontSize(20)
+            this.add.text(this.w * 0.5, this.w * 0.25,'Sneak past?')
+                .setFontSize(this.s * 2)
                 .setInteractive()
                 .on('pointerover', () => this.showMessage("Don't be suspicious!"))
                 .on('pointerdown', () => {
@@ -235,7 +235,7 @@ class Gobbers extends AdventureScene{
                     this.gotoScene('temple');
                 })
             this.add.text(this.w * 0.67, this.w * 0.25,'Talk?')
-                    .setFontSize(20)
+                    .setFontSize(this.s * 2)
                 .setInteractive()
                 .on('pointerover', () => this.showMessage("Diplomacy!"))
                 .on('pointerdown', () => {
@@ -481,7 +481,7 @@ class FinalRoom extends AdventureScene{
         })
         this.time.delayedCall(2000, () =>{
             let dragon = this.add.image(this.w*0.4, this.w*0.3, 'dragon')
-                .setScale(0.3)
+                .setScale(0.4)
                 .setInteractive()
                 .on('pointerover', () => {
                     this.showMessage("Who dares enter my domain?!!");
@@ -499,9 +499,10 @@ class FinalRoom extends AdventureScene{
                     var chance = Phaser.Math.Between(1, 3);
                     if(this.hasItem('sword')){
                         if(chance > 1){
-                            this.showMessage('The attack was successful!');
                             this.damageDP();
                             let dp = this.checkDP();
+                            this.showMessage(`The attack was successful!
+                            ${dp} DP left`);
                             if(dp <= 0){
                                 this.tweens.add({
                                     targets: dragon,
@@ -515,9 +516,10 @@ class FinalRoom extends AdventureScene{
                         }
                     }
                     else if(this.hasItem('Gobbers') && chance > 1){
-                        this.showMessage('The attack was successful!');
                         this.damageDP();
                         let dp = this.checkDP();
+                        this.showMessage(`The attack was successful!
+                        ${dp} DP left`);
                         if(dp <= 0){
                             this.tweens.add({
                                 targets: dragon,
@@ -533,9 +535,10 @@ class FinalRoom extends AdventureScene{
                             this.useMP();
                             let mp = this.checkMP();
                             this.damageDP();
-                            this.showMessage(`The attack was successful!
-                            ${mp} MP left.`)
                             let dp = this.checkDP();
+                            this.showMessage(`The attack was successful!
+                            ${mp} MP left.
+                            ${dp} DP left`)
                             if(dp <= 0){
                                 this.tweens.add({
                                     targets: dragon,
