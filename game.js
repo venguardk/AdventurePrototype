@@ -99,6 +99,8 @@ class Choice extends AdventureScene{
     onEnter(){
         this.add.image(this.w *0.33, this.w * 0.27, "background").setScale(0.6);
 
+        this.setValues();
+
         let sword = this.add.image(this.w * 0.4, this.w * 0.2, 'sword')
             .setScale(0.3)
             .setInteractive()
@@ -234,7 +236,7 @@ class Gobbers extends AdventureScene{
                     }
                     this.gotoScene('temple');
                 })
-            this.add.text(this.w * 0.67, this.w * 0.25,'Talk?')
+            this.add.text(this.w * 0.65, this.w * 0.25,'Talk?')
                     .setFontSize(this.s * 2)
                 .setInteractive()
                 .on('pointerover', () => this.showMessage("Diplomacy!"))
@@ -503,16 +505,6 @@ class FinalRoom extends AdventureScene{
                             let dp = this.checkDP();
                             this.showMessage(`The attack was successful!
                             ${dp} DP left`);
-                            if(dp <= 0){
-                                this.tweens.add({
-                                    targets: dragon,
-                                    y: `-=${2 * this.s}`,
-                                    alpha: { from: 1, to: 0 },
-                                    duration: 500,
-                                });
-                                this.showMessage('The dragon has been defeated!');
-                                this.time.delayedCall(1000, () => this.gotoScene('outro'));
-                            }
                         }
                     }
                     else if(this.hasItem('Gobbers') && chance > 1){
@@ -520,16 +512,6 @@ class FinalRoom extends AdventureScene{
                         let dp = this.checkDP();
                         this.showMessage(`The attack was successful!
                         ${dp} DP left`);
-                        if(dp <= 0){
-                            this.tweens.add({
-                                targets: dragon,
-                                y: `-=${2 * this.s}`,
-                                alpha: { from: 1, to: 0 },
-                                duration: 500,
-                            });
-                            this.showMessage('The dragon has been defeated!');
-                            this.time.delayedCall(1000, () => this.gotoScene('outro'));
-                        }
                     }
                     else if(this.hasItem('tome') && mp > 0){
                             this.useMP();
@@ -539,31 +521,11 @@ class FinalRoom extends AdventureScene{
                             this.showMessage(`The attack was successful!
                             ${mp} MP left.
                             ${dp} DP left`)
-                            if(dp <= 0){
-                                this.tweens.add({
-                                    targets: dragon,
-                                    y: `-=${2 * this.s}`,
-                                    alpha: { from: 1, to: 0 },
-                                    duration: 500,
-                                });
-                                this.showMessage('The dragon has been defeated!');
-                                this.time.delayedCall(1000, () => this.gotoScene('outro'));
-                            }
                     }
                     else if(chance > 2){
                         this.showMessage('The attack was successful!');
                         this.damageDP();
                         let dp = this.checkDP();
-                        if(dp <= 0){
-                            this.tweens.add({
-                                targets: dragon,
-                                y: `-=${2 * this.s}`,
-                                alpha: { from: 1, to: 0 },
-                                duration: 500,
-                            });
-                            this.showMessage('The dragon has been defeated!');
-                            this.time.delayedCall(1000, () => this.gotoScene('outro'));
-                        }
                     }else{
                         this.damageHP();
                         if(this.hasItem('shield') == false){this.damageHP();}
@@ -576,6 +538,16 @@ class FinalRoom extends AdventureScene{
                             this.showMessage("You start to lose consciousness");
                             this.time.delayedCall(1000, () => this.gotoScene('outro'));
                         }
+                    }
+                    if(dp <= 0){
+                        this.tweens.add({
+                            targets: dragon,
+                            y: `-=${2 * this.s}`,
+                            alpha: { from: 1, to: 0 },
+                            duration: 500,
+                        });
+                        this.showMessage('The dragon has been defeated!');
+                        this.time.delayedCall(1000, () => this.gotoScene('outro'));
                     }
                 })
             

@@ -2,9 +2,9 @@ class AdventureScene extends Phaser.Scene {
 
     init(data) {
         this.inventory = data.inventory || [];
-        this.hp = 3;
-        this.mp = 3;
-        this.dp = 3;
+        this.hp = data.hp;
+        this.mp = data.mp;
+        this.dp = data.dp;
     }
 
     constructor(key, name) {
@@ -166,6 +166,12 @@ class AdventureScene extends Phaser.Scene {
         console.warn('This AdventureScene did not implement onEnter():', this.constructor.name);
     }
 
+    setValues(){
+        this.hp = 3;
+        this.mp = 3;
+        this.dp = 3;
+    }
+    
     damageHP() {
         this.hp -= 1;
         if(this.hp < 0){
