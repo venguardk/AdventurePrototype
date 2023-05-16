@@ -20,7 +20,7 @@ class Loading extends Phaser.Scene{
          });
 
         //loading assets
-        this.load.path = "./assets/";
+        this.load.path = "./Assets/";
         this.load.video('logo', 'Studio Intro.mp4');
         this.load.audio('dial', 'Dial up.mp3');
         this.load.image('start', 'Menu.jpg');
