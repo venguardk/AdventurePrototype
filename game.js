@@ -206,12 +206,10 @@ class Gobbers extends AdventureScene{
                         this.showMessage("You easily take down the goblin, no one's getting that treasure, but me");
                     } else if (this.hasItem('tome')){
                         this.useMP();
-                        let mp = this.checkMP();
-                        this.showMessage(`You use your magic to defeat the goblin. ${mp} mp left.`)
+                        this.showMessage(`You use your magic to defeat the goblin. ${this.checkMP()} mp left.`)
                     } else{
                         this.damageHP();
-                        let hp = this.checkHP();
-                        this.showMessage(`It was a difficult fight, but you managed to win with ${hp} hp.`);
+                        this.showMessage(`It was a difficult fight, but you managed to win with ${this.checkHP()} hp.`);
                     }
                     this.tweens.add({
                         targets: goblin,
@@ -231,8 +229,7 @@ class Gobbers extends AdventureScene{
                         this.showMessage("Snuck past");
                     } else{
                         this.damageHP();
-                        let hp = this.checkHP();
-                        this.showMessage(`Couldn't get past and the goblin attacked, leaving you with ${hp} hp.`);
+                        this.showMessage(`Couldn't get past and the goblin attacked, leaving you with ${this.checkHP()} hp.`);
                     }
                     this.gotoScene('temple');
                 })
@@ -378,17 +375,15 @@ class Blueroom extends AdventureScene{
     onEnter(){
         this.add.image(this.w *0.37, this.w * 0.28, "roomBlue").setScale(0.54);
         if (this.hasItem('tome')){
-            let mp = this.checkMP();
             this.add.text(this.w * 0.35, this.w * 0.3, 'Use Magic?').setFontSize(this.s * 2);
             this.add.text(this.w *0.35, this.w *0.35, 'Yes')
                 .setFontSize(this.s * 2)
                 .setInteractive()
-                .on('pointerover', () => this.showMessage(`Will use MP, ${mp} remaining`))
+                .on('pointerover', () => this.showMessage(`Will use MP, ${this.checkMP()} remaining`))
                 .on('pointerdown', () => {
                     this.useMP();
-                    let mp = this.checkMP();
                     this.showMessage(`With your magic, you are able to freeze the river and obtain the brilliant blue gem! 
-                    MP: ${mp}`);
+                    MP: ${this.checkMP()}`);
                     this.tweens.add({
                         targets: blue,
                         y: `-=${2 * this.s}`,
@@ -403,9 +398,8 @@ class Blueroom extends AdventureScene{
                 .on('pointerover', () => this.showMessage('This will be pretty risky without magic'))
                 .on('pointerdown', () => {
                     this.damageHP();
-                    let hp = this.checkHP();
                     this.showMessage(`It was a difficult time, and took it's toll
-                    ${hp} HP left.`)
+                    ${this.checkHP()} HP left.`)
                     this.tweens.add({
                         targets: blue,
                         y: `-=${2 * this.s}`,
@@ -440,9 +434,8 @@ class Blueroom extends AdventureScene{
                     }
                     else{
                         this.damageHP();
-                        let hp = this.checkHP();
                         this.showMessage(`It was a rough ride, and you barely obtain the blue gem. 
-                        ${hp} HP left`);
+                        ${this.checkHP()} HP left`);
                     }
                     this.tweens.add({
                         targets: blue,
@@ -481,16 +474,15 @@ class FinalRoom extends AdventureScene{
             ease: 'Sine.inOut',
             duration: 1000
         })
-        this.time.delayedCall(2000, () =>{
-            let dragon = this.add.image(this.w*0.4, this.w*0.3, 'dragon')
-                .setScale(0.4)
-                .setInteractive()
-                .on('pointerover', () => {
-                    this.showMessage("Who dares enter my domain?!!");
-                })
-        })
+
+        let dragon = this.add.image(this.w*0.4, this.w*0.3, 'dragon')
+            .setScale(0.4)
+            .setInteractive()
+            .on('pointerover', () => {
+                this.showMessage("Who dares enter my domain?!!");
+            })
+
         this.time.delayedCall(3000, () => {
-            let mp = this.checkMP();
             let attack = this.add.text(this.w*0.1, this.w*0.5, 'Attack')
                 .setFontSize(this.s *2)
                 .setInteractive()
@@ -502,44 +494,38 @@ class FinalRoom extends AdventureScene{
                     if(this.hasItem('sword')){
                         if(chance > 1){
                             this.damageDP();
-                            let dp = this.checkDP();
                             this.showMessage(`The attack was successful!
-                            ${dp} DP left`);
+                            ${this.checkDP()} DP left`);
                         }
                     }
                     else if(this.hasItem('Gobbers') && chance > 1){
                         this.damageDP();
-                        let dp = this.checkDP();
                         this.showMessage(`The attack was successful!
-                        ${dp} DP left`);
+                        ${this.checkDP()} DP left`);
                     }
-                    else if(this.hasItem('tome') && mp > 0){
+                    else if(this.hasItem('tome') && this.checkMP() > 0){
                             this.useMP();
-                            let mp = this.checkMP();
                             this.damageDP();
-                            let dp = this.checkDP();
                             this.showMessage(`The attack was successful!
-                            ${mp} MP left.
-                            ${dp} DP left`)
+                            ${this.checkMP()} MP left.
+                            ${this.checkDP()} DP left`)
                     }
                     else if(chance > 2){
                         this.showMessage('The attack was successful!');
                         this.damageDP();
-                        let dp = this.checkDP();
                     }else{
                         this.damageHP();
                         if(this.hasItem('shield') == false){this.damageHP();}
-                        let hp = this.checkHP();
                         this.showMessage(`It was a miss. 
                     The dragon breathes fire.
-                    ${hp} HP left.`)
+                    ${this.checkHP()} HP left.`)
                         
-                        if(hp <= 0){
+                        if(this.checkHP() <= 0){
                             this.showMessage("You start to lose consciousness");
                             this.time.delayedCall(1000, () => this.gotoScene('outro'));
                         }
                     }
-                    if(dp <= 0){
+                    if(this.checkDP() <= 0){
                         this.tweens.add({
                             targets: dragon,
                             y: `-=${2 * this.s}`,
@@ -554,7 +540,7 @@ class FinalRoom extends AdventureScene{
             let talk = this.add.text(this.w * 0.3, this.w * 0.5, 'Talk')
                 .setFontSize(this.s * 2)
                 .setInteractive()
-                .on('pointerover', () => this.showImage.message('Please it was a mistake!'))
+                .on('pointerover', () => this.showMessage('Please it was a mistake!'))  
                 .on('pointerdown', () => {
                     if(this.hasItem('Gobbers')){
                         this.showMessage('Hmmmm, you seem like a nice fellow, considering you have befriended my associate, Gobbers. I will share my treasures with you!');
